@@ -32,6 +32,21 @@ const MapPage = () => {
 
   const onLoad = useCallback((map) => (mapRef.current = map), []);
 
+  const generateHouses = (position) => {
+    const _houses = [];
+    for (let i = 0; i < 100; i++) {
+      const direction = Math.random() < 0.5 ? -3 : 3;
+      _houses.push({
+        lat: position.lat + Math.random() / direction,
+        lng: position.lng + Math.random() / direction,
+      });
+    }
+    console.log(_houses);
+    return _houses;
+  };
+
+  const houses = useMemo(() => generateHouses(center), [center]);
+
   if (!isLoaded) return <Loader />;
 
   return (
@@ -53,6 +68,11 @@ const MapPage = () => {
         {office && (
           <>
             <Marker position={office} />
+
+            {houses &&
+              houses.map((house) => (
+                <Marker key={house.lat} position={house} />
+              ))}
             <Circle center={office} radius={5000} options={closeOptions} />
             <Circle center={office} radius={10000} options={middleOptions} />
             <Circle center={office} radius={15000} options={farOptions} />
