@@ -1,8 +1,7 @@
-import { Container, Loader } from "@mantine/core";
+import { Container, Loader, Space } from "@mantine/core";
 import {
   Circle,
   DirectionsRenderer,
-  DirectionsService,
   GoogleMap,
   Marker,
   MarkerClusterer,
@@ -15,6 +14,7 @@ import {
   farOptions,
   middleOptions,
 } from "../styles/mapPageStyles";
+import DistanceInfo from "./DistanceInfo";
 import Places from "./Places";
 
 const libraries = ["places"];
@@ -29,7 +29,11 @@ const MapPage = () => {
   const mapRef = useRef();
   const center = useMemo(() => ({ lat: 57.7089, lng: 11.9746 }), []);
   const options = useMemo(
-    () => ({ disableDefaultUI: true, clickableIcons: false }),
+    () => ({
+      disableDefaultUI: true,
+      clickableIcons: false,
+      mapId: "2d7ad115aac7539a",
+    }),
     []
   );
 
@@ -69,10 +73,7 @@ const MapPage = () => {
     );
   };
 
-  const houses = useMemo(
-    () => generateHouses(office ? office : center),
-    [center, office]
-  );
+  const houses = useMemo(() => generateHouses(center), [center]);
 
   if (!isLoaded) return <Loader />;
 
@@ -85,6 +86,8 @@ const MapPage = () => {
         }}
       />
 
+      {directions && <DistanceInfo leg={directions.routes[0].legs[0]} />}
+      <Space h="sm" />
       <GoogleMap
         zoom={10}
         center={center}
