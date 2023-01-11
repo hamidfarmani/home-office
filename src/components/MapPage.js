@@ -73,7 +73,10 @@ const MapPage = () => {
     );
   };
 
-  const houses = useMemo(() => generateHouses(center), [center]);
+  const houses = useMemo(
+    () => generateHouses(office ? office : center),
+    [office, center]
+  );
 
   if (!isLoaded) return <Loader />;
 

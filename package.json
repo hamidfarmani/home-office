@@ -1,7 +1,7 @@
 {
   "name": "home-office",
   "version": "1.0.0",
-  "homepage": "https://home-office.netlify.app",
+  "homepage": "https://hamid-home-office.netlify.app",
   "private": true,
   "dependencies": {
     "@emailjs/browser": "^3.10.0",
