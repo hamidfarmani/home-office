@@ -1,6 +1,8 @@
 import { Container, Loader } from "@mantine/core";
 import {
   Circle,
+  DirectionsRenderer,
+  DirectionsService,
   GoogleMap,
   Marker,
   MarkerClusterer,
@@ -18,6 +20,8 @@ import Places from "./Places";
 const libraries = ["places"];
 
 const MapPage = () => {
+  const google = window.google;
+
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries: libraries,
@@ -30,6 +34,7 @@ const MapPage = () => {
   );
 
   const [office, setOffice] = useState();
+  const [directions, setDirections] = useState();
 
   const onLoad = useCallback((map) => (mapRef.current = map), []);
 
@@ -43,6 +48,25 @@ const MapPage = () => {
       });
     }
     return _houses;
+  };
+
+  const fetchDirections = (house) => {
+    if (!office) return;
+
+    const service = new google.maps.DirectionsService();
+
+    service.route(
+      {
+        origin: house,
+        destination: office,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === "OK" && result) {
+          setDirections(result);
+        }
+      }
+    );
   };
 
   const houses = useMemo(
@@ -68,6 +92,19 @@ const MapPage = () => {
         options={options}
         onLoad={onLoad}
       >
+        {directions && (
+          <DirectionsRenderer
+            directions={directions}
+            options={{
+              polylineOptions: {
+                zIndex: 50,
+                strokeColor: "#1976D2",
+                strokeWeight: 5,
+              },
+            }}
+          />
+        )}
+
         {office && (
           <>
             <Marker position={office} />
@@ -80,6 +117,9 @@ const MapPage = () => {
                     key={house.lat}
                     position={house}
                     clusterer={clusterer}
+                    onClick={() => {
+                      fetchDirections(house);
+                    }}
                   />
                 ))
               }
