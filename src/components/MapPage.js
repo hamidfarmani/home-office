@@ -1,7 +1,17 @@
 import { Container, Loader } from "@mantine/core";
-import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import {
+  Circle,
+  GoogleMap,
+  Marker,
+  useLoadScript,
+} from "@react-google-maps/api";
 import { useCallback, useMemo, useRef, useState } from "react";
 import "../styles/map.css";
+import {
+  closeOptions,
+  farOptions,
+  middleOptions,
+} from "../styles/mapPageStyles";
 import Places from "./Places";
 
 const libraries = ["places"];
@@ -43,6 +53,9 @@ const MapPage = () => {
         {office && (
           <>
             <Marker position={office} />
+            <Circle center={office} radius={5000} options={closeOptions} />
+            <Circle center={office} radius={10000} options={middleOptions} />
+            <Circle center={office} radius={15000} options={farOptions} />
           </>
         )}
       </GoogleMap>
