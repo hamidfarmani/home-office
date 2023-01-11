@@ -3,6 +3,7 @@ import {
   Circle,
   GoogleMap,
   Marker,
+  MarkerClusterer,
   useLoadScript,
 } from "@react-google-maps/api";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -35,17 +36,19 @@ const MapPage = () => {
   const generateHouses = (position) => {
     const _houses = [];
     for (let i = 0; i < 100; i++) {
-      const direction = Math.random() < 0.5 ? -3 : 3;
+      const direction = Math.random() < 0.5 ? -5 : 5;
       _houses.push({
         lat: position.lat + Math.random() / direction,
         lng: position.lng + Math.random() / direction,
       });
     }
-    console.log(_houses);
     return _houses;
   };
 
-  const houses = useMemo(() => generateHouses(center), [center]);
+  const houses = useMemo(
+    () => generateHouses(office ? office : center),
+    [center, office]
+  );
 
   if (!isLoaded) return <Loader />;
 
@@ -69,10 +72,18 @@ const MapPage = () => {
           <>
             <Marker position={office} />
 
-            {houses &&
-              houses.map((house) => (
-                <Marker key={house.lat} position={house} />
-              ))}
+            <MarkerClusterer>
+              {(clusterer) =>
+                houses &&
+                houses.map((house) => (
+                  <Marker
+                    key={house.lat}
+                    position={house}
+                    clusterer={clusterer}
+                  />
+                ))
+              }
+            </MarkerClusterer>
             <Circle center={office} radius={5000} options={closeOptions} />
             <Circle center={office} radius={10000} options={middleOptions} />
             <Circle center={office} radius={15000} options={farOptions} />
